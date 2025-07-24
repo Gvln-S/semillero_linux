@@ -1,0 +1,73 @@
+mkdir
+
+rm
+  -r / -R: Borra recursivamente (para carpetas).
+  -f: Forza la eliminación (no pregunta).
+
+grep
+  -i: Ignora mayúsculas/minúsculas.
+  -r: Búsqueda recursiva.
+
+find
+  .: Directorio actual como punto de partida.
+-name "archivo": Busca por nombre.
+-type f: Solo archivos.
+-type d: Solo directorios.
+-mtime -1: Modificados en el último día.
+-exec: Ejecuta acción sobre resultados (ej: rm).
+
+chmod
+  +x, +r, +w: Añade permisos de ejecución, lectura o escritura.
+  -x, -r, -w: Quita permisos.
+  u, g, o, a: Usuario, grupo, otros, todos.
+  Numérico: chmod 755 archivo.sh
+
+chown
+  -R: Recursivo para carpetas.
+  --from: Cambia solo si coincide dueño actual.
+
+ufw (firewall)
+  enable / disable: Activa o desactiva el firewall.
+
+  status: Muestra estado.
+  allow 
+  deny 
+  delete allow 
+
+cd
+  cd: Va al home.
+  cd ..: Sube un nivel.
+  cd /ruta: Va a una ruta absoluta.
+
+ mv
+
+cp
+
+df – Ver espacio en disco
+  -h : Muestra en formato legible (GB, MB...).
+  -T : Muestra tipo de sistema de archivos.
+  --total : Muestra un resumen total.
+
+ping – Probar conectividad de red
+  -c : Número de paquetes a enviar (ej: -c 4).
+
+ip a – Ver direcciones IP (forma corta de ip address)
+  ip route : Muestra tabla de rutas.
+
+netstat – Ver conexiones de red y puertos abiertos
+  -t : TCP.
+  -u : UDP.
+  -l : Solo servicios en escucha (listening).
+  -a : Todas las conexiones.
+
+wget – Descargar archivos desde Internet
+  -O archivo : Guarda con nombre específico.
+
+apt - Instalar en debian like
+  apt install
+  apt update
+  apt upgrade
+  apt remove
+  apt purge
+  apt search
+  apt autoremove

@@ -1,0 +1,123 @@
+\documentclass[conference, a4paper]{IEEEtran}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[spanish]{babel}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{url}
+\usepackage{xcolor}
+
+\begin{document}
+
+\title{Propuesta de Semillero de Investigación: Asistente Inteligente para la Administración de Sistemas Linux}
+
+\author{
+    \IEEEauthorblockN{Santiago Gavilán Páez}
+    \IEEEauthorblockA{Universidad de La Sabana\\
+    Estudiante de Ingeniería Informática\\
+    Email: santiagogapa@unisabana.edu.co}
+}
+
+\maketitle
+
+\begin{abstract}
+Esta propuesta presenta la creación de un semillero de investigación bajo la rama CIS (Computer Intelligence Science) de IEEE, enfocado en el 
+desarrollo de un asistente inteligente que facilite la administración de sistemas Linux para usuarios principiantes mediante el uso de procesamiento 
+de lenguaje natural (NLP). El semillero tiene como objetivo introducir a los investigadores en los fundamentos de Linux y la inteligencia artificial, 
+utilizando tecnologías gratuitas como Ubuntu, Python, re El proyecto se desarrollará durante 16 semanas, del 4 de agosto al 24 de 
+oviembre de 2025 -de manera tentativa-, con reuniones semanales de 2 horas -con horario por definir-, culminando en un prototipo funcional que 
+será entregado antes del retorno a clases 2025-2 en un 80% o más. Esta iniciativa busca fomentar el aprendizaje práctico y atraer a estudiantes 
+interesados en automatización e inteligencia artificial.
+\end{abstract}
+
+\begin{IEEEkeywords}
+Linux, Inteligencia Artificial, Procesamiento de Lenguaje Natural, Semillero de Investigación, Automatización
+\end{IEEEkeywords}
+
+\section{Introducción}
+La rama CIS (Computer Intelligence Science) de IEEE en la Universidad de La Sabana se centra en la automatización e inteligencia artificial aplicada 
+a la tecnología. En este contexto, propongo la creación de un semillero de investigación titulado ``Asistente Inteligente para la Administración de 
+Sistemas Linux''. Este semillero busca proporcionar a los investigadores una introducción práctica a los sistemas Linux y a las técnicas de 
+inteligencia artificial, específicamente procesamiento de lenguaje natural (NLP), a través de un proyecto colaborativo que resulte en un prototipo 
+funcional.
+
+
+\section{Relevancia del Proyecto}
+El sistema operativo Linux es fundamental en áreas como servidores, computación en la nube, DevOps y ciberseguridad, siendo una herramienta esencial 
+en la industria tecnológica. Sin embargo, su curva de aprendizaje puede ser intimidante para principiantes debido a su interfaz de línea de comandos. 
+Por otro lado, la inteligencia artificial, especialmente el procesamiento de lenguaje natural, está transformando la forma en que interactuamos con 
+la tecnología, permitiendo interfaces más intuitivas.
+
+El semillero propone desarrollar un asistente inteligente que traduzca instrucciones en lenguaje natural (por ejemplo, ``liberar espacio en disco'') 
+a comandos Linux ejecutables (como \texttt{rm -rf /tmp/*}). Este proyecto es ideal para:
+\begin{itemize}
+    \item \textbf{Introducir Linux}: Los investigadores aprenderán comandos básicos, estructura de directorios y gestión de permisos en Linux, 
+                                     habilidades altamente demandadas.
+    \item \textbf{Iniciarse en IA}: Los investigadores participantes explorarán conceptos de NLP y fortalecerán sus habilidades en Python, 
+                                    una de las herramientas más usadas en inteligencia artificial.
+    \item \textbf{Atracción para investigadores}: La creación de un producto tangible y útil (un asistente) motivará a estudiantes principiantes
+                                                  a unirse al semillero.
+\end{itemize}
+
+\section{Tecnologías Propuestas}
+\begin{itemize}
+    \item \textbf{Linux (Ubuntu)}: Distribución inicial para principiantes, usada para aprender comandos y hospedar el asistente.
+    \item \textbf{Python}: Lenguaje de programación para scripting y desarrollo del asistente -no se menciona directamente pero el lenguaje .sh
+                           sera de vital importancia para el proyecto-, usando bibliotecas como:
+        \begin{itemize}
+            \item \texttt{subprocess}: Para ejecutar comandos Linux desde Python.
+            \item \texttt{spaCy}: Biblioteca gratuita para procesamiento de lenguaje natural, ideal para interpretar instrucciones.
+        \end{itemize}
+    \item \textbf{Ollama}: Herramienta gratuita para hospedar modelos de lenguaje ligeros (como LLaMA) en entornos locales, usando máquinas virtuales
+                           (VirtualBox) o WSL (Windows Subsystem for Linux). Esto permitirá implementar un modelo de NLP básico sin depender de 
+                           servicios en la nube.
+    \item \textbf{VirtualBox/WSL}: Entornos gratuitos para configurar Linux en cualquier sistema operativo, asegurando que todos los estudiantes
+                                   puedan participar.
+    \item \textbf{Opcional - Tkinter}: Biblioteca de Python para crear una interfaz gráfica simple, si se desea una experiencia más amigable.
+\end{itemize}
+
+\section{Plan de Trabajo}
+El proyecto se desarrollará del 4 de agosto al 24 de noviembre de 2025 -como se menciono antes de manera tentativa-, con reuniones semanales de 2 
+horas (16 sesiones). El cronograma es el siguiente:
+
+\begin{itemize}
+    \item \textbf{Semanas 1-4 (4 de agosto - 25 de agosto)}: \textbf{Introducción a Linux}
+        \begin{itemize}
+            \item Temas: Distribuciones Linux (Ubuntu, Debian), comandos básicos, estructura de directorios, sistema de permisos en Linux.
+            \item Actividades: Configuración de entornos Linux (VirtualBox/WSL), prácticas de comandos.
+            \item Entregable: Guía colaborativa de comandos Linux.
+        \end{itemize}
+    \item \textbf{Semanas 5-8 (1 de septiembre - 22 de septiembre)}: \textbf{Fundamentos de Python y NLP}
+        \begin{itemize}
+            \item Temas: Python básico, uso de \texttt{subprocess} para ejecutar comandos, introducción a NLP con \texttt{spaCy}, mapeo de frases a 
+                         comandos.
+            \item Actividades: Creación de scripts que ejecuten comandos Linux desde Python, análisis de texto simple.
+            \item Entregable: Script inicial que mapea frases a comandos.
+        \end{itemize}
+    \item \textbf{Semanas 9-12 (29 de septiembre - 20 de octubre)}: \textbf{Desarrollo del Asistente}
+        \begin{itemize}
+            \item Temas: Diseño del asistente (interfaz en consola o gráfica -dependera de la semana en la que se este y de las ideas de los
+                         investigadores- con \texttt{Tkinter}), integración de Ollama para NLP local, reglas para comandos comunes.
+            \item Actividades: Implementación del prototipo, pruebas iniciales.
+            \item Entregable: Prototipo beta del asistente.
+        \end{itemize}
+    \item \textbf{Semanas 13-16 (27 de octubre - 24 de noviembre)}: \textbf{Pruebas y Documentación}
+        \begin{itemize}
+            \item Temas: Pruebas de usabilidad, mejoras al prototipo, documentación.
+            \item Actividades: Evaluación con usuarios novatos, refinamiento del asistente.
+            \item Entregable: Prototipo final y presentación del proyecto.
+        \end{itemize}
+\end{itemize}
+
+El proyecto será entregado antes del retorno a clases 2025-2, con un informe final que incluirá el código fuente, manual de uso para que en CIS se
+tenga una guía de lo que se va estar haciendo como en los anteriores semilleros.
+
+Solicito el apoyo del querido John Rojas increible persona y mejor presidente y Sergio Nieto para aprobar y promover este semillero dentro de la rama
+CIS.
+
+\begin{thebibliography}{1}
+\bibitem{spacy} Explosion, ``spaCy: Industrial-Strength NLP,'' \url{https://spacy.io}.
+\bibitem{linuxbible} Negus, C., ``Linux Bible,'' 10th ed., Wiley, 2020.
+\end{thebibliography}
+
+\end{document}
