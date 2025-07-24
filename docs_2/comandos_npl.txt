@@ -39,9 +39,22 @@ cd
   cd ..: Sube un nivel.
   cd /ruta: Va a una ruta absoluta.
 
- mv
+mv
 
 cp
+
+cat
+
+clear
+--------------------------------//-------------------------------------------------
+ps
+
+pwd
+
+ls
+  -l
+  -a
+  -F
 
 df – Ver espacio en disco
   -h : Muestra en formato legible (GB, MB...).
