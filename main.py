@@ -75,21 +75,110 @@ def parse_input(user_input):
     #token.pos in ("NOUN", "PROPN")' -> selecciona sustantivos comunes y propios
 
     #lu
-    # Crear carpeta
+    
+    # Crear carpeta "nombre"
     if "crear" in verbs:
-        for i, token in enumerate(doc):
-            if token.lemma_ == "crear" and i + 1 < len(doc):
-                next_token = doc[i + 1]
-                if next_token.text in ["carpeta", "directorio"]:
-                    for t in doc[i+2:]:
-                        if t.pos_ in ("PROPN", "NOUN"):
-                            return f"mkdir {t.text}"
+        for i, tok in enumerate(doc):
+            #determina si el verbo es crear
+            if tok.lemma_ == "crear" and i+1 < len(doc):
+                nxt = doc[i+1].lemma_
+                #determina si el siguiente token es un nombre
+                if nxt in ("carpeta", "directorio"):
+                    if i+2 < len(doc):
+                        #el ultimo token lo toma como el nombre de la carpeta o directorio
+                        name = doc[i+2].text
+                        return f"mkdir {name}"
+
 
     # Eliminar archivo o carpeta
-    if "eliminar" in verbs or "borrar" in verbs:
+    if any(v in verbs for v in ("eliminar", "borrar")):
+        target = None
+        is_dir = False
+        force = False
+        #determina si la palabra forzar esta en la frase
+        for i, tok in enumerate(doc):
+            if tok.text in ("forzar", "forzado"):
+                #si si pone en true el force
+                force = True
+            #determina el objeto de la oración
+            if tok.pos_ in ("PROPN","NOUN"):
+                prev = doc[i-1].lemma_ if i>0 else ""
+                #si es carpeta o directorio is_dir se vuelve true
+                if prev in ("carpeta","directorio"):
+                    is_dir = True
+                target = tok.text
+    if target:
+        #crea una lista a al que le va añadiendo las partes del comando necesarias
+        flags = []
+        if is_dir: flags.append("-r")
+        if force:  flags.append("-f")
+        #va formando el string del comando
+        flag_str = (" " + " ".join(flags)) if flags else "" 
+        #devuelve el comando con la lista y el target 
+        return f"rm{flag_str} {target}"
+
+
+    #listar archivos
+    if any(v in verbs for v in ("listar","mostrar")):
+        #verifica el verbo de la oración
+        if any(n in nouns for n in ("todo","archivos","ocultos")):
+            #luego busca el sustantivo de la oración y si es alguno de estos devuelve el comando
+            return "ls -aF"
+        else:
+            #si no devuelve el comando de listar
+            return "ls"
+        
+    
+    #mostrar directorio actual
+    if any(v in verbs for v in ("mostrar","ver")) and "directorio" in nouns:
+        #si mostrar y directorio estan en la misma oración, entonces devuelve el comando
+        return "pwd"
+    
+    
+    #buscar texto
+    if "grep" in user_input:
+        # si el usuario ya ha escrito grep, retornamos directamente
+        return user_input.strip()
+    if any(v in verbs for v in ("buscar","encontrar")) and "texto" in nouns:
+        # asume: "buscar texto X en archivo Y"
+        words = [tok.text for tok in doc]
+        try:
+            idx_txt = words.index("texto")
+            pattern = words[idx_txt+1]
+            idx_en = words.index("en")
+            target = words[idx_en+1]
+            # caso recursivo
+            rec = "-r " if "recursivo" in nouns else ""
+            ignore = "-i " if "mayúsculas" in nouns or "case" in user_input else ""
+            return f"grep {ignore}{rec}'{pattern}' {target}"
+        except ValueError:
+            pass
+
+    
+    #buscar archivos o directorios
+    if "find" in user_input:
+        return user_input.strip()
+    if any(v in verbs for v in ("buscar","encontrar")) and any(n in nouns for n in ("archivo","directorio")):
+        # modificados recientemente
+        if "modificados" in nouns or "modificado" in nouns:
+            return "find . -mtime -1"
+        # búsqueda por nombre
+        for tok in doc:
+            if tok.pos_ in ("PROPN","NOUN") and tok.text not in ("archivo","directorio"):
+                return f"find . -name \"{tok.text}\""
+        return "find ."
+    
+    
+
+
+
+
+    if "buscar" in verbs or "encontrar" in verbs:
         for t in doc:
             if t.pos_ in ("PROPN", "NOUN"):
-                return f"rm {t.text}"
+                return f"find -name {t.text}"
+            
+    
     
     #################################################
     #gavilan
