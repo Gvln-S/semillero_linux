@@ -115,30 +115,21 @@ def parse_input(user_input):
         #devuelve el comando con la lista y el target 
         return f"rm{flag_str} {target}"
 
-    #ps
-    if any(v in verbs for v in ("listar", "mostrar")) and "procesos" in nouns:
-        if any(n in nouns for n in ("todos",)):
-            return "ps -e"
-        elif any(n in nouns for n in("completos",)):
-            return "ps -f"
-        elif any(n in nouns for n in("forma","larga","formato")):
-            return "ps -l"
-
-    #listar archivos
-    elif any(v in verbs for v in ("listar","mostrar")):
-        #verifica el verbo de la oración
-        if any(n in nouns for n in ("todos","archivos","ocultos")):
-            #luego busca el sustantivo de la oración y si es alguno de estos devuelve el comando
-            return "ls -aF"
-        else:
-            #si no devuelve el comando de listar
-            return "ls"
-
-    #mostrar directorio actual
-    if any(v in verbs for v in ("mostrar","ver")) and "directorio" in nouns:
-        #si mostrar y directorio estan en la misma oración, entonces devuelve el comando
-        return "pwd"
-
+    #listar (archivos, procesos)
+    if any(v in verbs for v in("listar","mostrar","ver")):
+        if any(n in nouns for n in("archivos",)):
+            if any(n in nouns for n in ("todos","ocultos")):
+                return "ls -aF"
+            else:
+                return "ls"
+        elif any(n in nouns for n in("procesos",)):
+            if any(n in nouns for n in("forma","larga","formato")):
+                return "ps -l"
+            else:
+                return "ps"
+        elif any(n in nouns for n in("directorio","ubicacion")):
+            return "pwd"
+        
     #buscar texto
     if "grep" in user_input:
         # si el usuario ya ha escrito grep, retornamos directamente
