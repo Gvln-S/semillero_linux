@@ -22,7 +22,7 @@ def execute_command(command):
 def is_safe_command(command):
     # Lista de comandos permitidos
     allowed_commands = ['ls', 'dir', 'pwd', 'mkdir', 'rm', 'cat', 'df', 'du', 'top', 'grep', 'find',
-                        'chmod', 'chown', 'ufw', 'cd', 'mv', 'cp', 'clear']
+                        'chmod', 'chown', 'ufw', 'cd', 'mv', 'cp', 'clear', 'ps']
 
     # Comandos peligrosos completos (por patrón exacto)
     exact_blocked = ['rm -rf /', ':(){ :|:& };:', 'mkfs', 'dd', 'bash']
@@ -115,28 +115,35 @@ def parse_input(user_input):
         #devuelve el comando con la lista y el target 
         return f"rm{flag_str} {target}"
 
+    #ps
+    if any(v in verbs for v in ("listar", "mostrar")) and "procesos" in nouns:
+        if any(n in nouns for n in ("todos",)):
+            return "ps -e"
+        elif any(n in nouns for n in("completos",)):
+            return "ps -f"
+        elif any(n in nouns for n in("forma","larga","formato")):
+            return "ps -l"
 
     #listar archivos
-    if any(v in verbs for v in ("listar","mostrar")):
+    elif any(v in verbs for v in ("listar","mostrar")):
         #verifica el verbo de la oración
-        if any(n in nouns for n in ("todo","archivos","ocultos")):
+        if any(n in nouns for n in ("todos","archivos","ocultos")):
             #luego busca el sustantivo de la oración y si es alguno de estos devuelve el comando
             return "ls -aF"
         else:
             #si no devuelve el comando de listar
             return "ls"
 
-
     #mostrar directorio actual
     if any(v in verbs for v in ("mostrar","ver")) and "directorio" in nouns:
         #si mostrar y directorio estan en la misma oración, entonces devuelve el comando
         return "pwd"
 
-
     #buscar texto
     if "grep" in user_input:
         # si el usuario ya ha escrito grep, retornamos directamente
         return user_input.strip()
+
     if any(v in verbs for v in ("buscar","encontrar")) and "texto" in nouns:
         # asume: "buscar texto X en archivo Y"
         words = [tok.text for tok in doc]
@@ -155,6 +162,7 @@ def parse_input(user_input):
     #buscar archivos o directorios
     if "find" in user_input:
         return user_input.strip()
+
     if any(v in verbs for v in ("buscar","encontrar")) and any(n in nouns for n in ("archivo","directorio")):
         # modificados recientemente
         if "modificados" in nouns or "modificado" in nouns:
