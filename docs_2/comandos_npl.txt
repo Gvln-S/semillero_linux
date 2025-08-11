@@ -48,6 +48,9 @@ cat
 clear
 --------------------------------//-------------------------------------------------
 ps
+  -e : Muestra todos los procesos
+  -f : Formato completo
+  -l : lista larga
 
 pwd
 
@@ -55,6 +58,7 @@ ls
   -l
   -a
   -F
+  -R
 
 df – Ver espacio en disco
   -h : Muestra en formato legible (GB, MB...).
