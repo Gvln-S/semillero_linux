@@ -12,12 +12,12 @@ def execute_command(command):
         #text=True -> devuelve la salida como texto en lugar de bytes
         #check=True -> si el comando falla, lanza una excepcion
         return result.stdout
-        #stdout -> salida estandar del comando
+    #stdout -> salida estandar del comando
     except subprocess.CalledProcessError as e:
         return f"Error al ejecutar el comando: {e.stderr}"
     except Exception as e:
         return f"Error inesperado: {str(e)}"
-    
+
 
 def is_safe_command(command):
     # Lista de comandos permitidos
@@ -29,14 +29,14 @@ def is_safe_command(command):
 
     # Palabras clave peligrosas si se usan con parámetros peligrosos
     risky_patterns = {
-        'rm': ['-rf', '--no-preserve-root', '/'],
-        'chmod': ['777', '--recursive'],
-        'chown': ['--recursive'],
-        'mv': [' /'],  # mover al root
-        'wget': ['http'],  # evitar descargas
-        'curl': ['http'],
-        'sudo': []
-    }
+            'rm': ['-rf', '--no-preserve-root', '/'],
+            'chmod': ['777', '--recursive'],
+            'chown': ['--recursive'],
+            'mv': [' /'],  # mover al root
+            'wget': ['http'],  # evitar descargas
+            'curl': ['http'],
+            'sudo': []
+            }
 
     if not command or not command.strip():
         return False
@@ -62,8 +62,6 @@ def is_safe_command(command):
 
     return True
 
-
-
 def parse_input(user_input):
     doc = nlp(user_input.lower().strip())  # convierte la frase a minusculas, quita espacios al incio y final
 
@@ -75,7 +73,7 @@ def parse_input(user_input):
     #token.pos in ("NOUN", "PROPN")' -> selecciona sustantivos comunes y propios
 
     #lu
-    
+
     # Crear carpeta "nombre"
     if "crear" in verbs:
         for i, tok in enumerate(doc):
@@ -89,12 +87,12 @@ def parse_input(user_input):
                         name = doc[i+2].text
                         return f"mkdir {name}"
 
+    target = None
+    is_dir = False
+    force = False
 
     # Eliminar archivo o carpeta
     if any(v in verbs for v in ("eliminar", "borrar")):
-        target = None
-        is_dir = False
-        force = False
         #determina si la palabra forzar esta en la frase
         for i, tok in enumerate(doc):
             if tok.text in ("forzar", "forzado"):
@@ -127,14 +125,14 @@ def parse_input(user_input):
         else:
             #si no devuelve el comando de listar
             return "ls"
-        
-    
+
+
     #mostrar directorio actual
     if any(v in verbs for v in ("mostrar","ver")) and "directorio" in nouns:
         #si mostrar y directorio estan en la misma oración, entonces devuelve el comando
         return "pwd"
-    
-    
+
+
     #buscar texto
     if "grep" in user_input:
         # si el usuario ya ha escrito grep, retornamos directamente
@@ -154,7 +152,6 @@ def parse_input(user_input):
         except ValueError:
             pass
 
-    
     #buscar archivos o directorios
     if "find" in user_input:
         return user_input.strip()
@@ -167,48 +164,58 @@ def parse_input(user_input):
             if tok.pos_ in ("PROPN","NOUN") and tok.text not in ("archivo","directorio"):
                 return f"find . -name \"{tok.text}\""
         return "find ."
-    
-    
-
-
-
 
     if "buscar" in verbs or "encontrar" in verbs:
         for t in doc:
             if t.pos_ in ("PROPN", "NOUN"):
                 return f"find -name {t.text}"
-            
-    
-    
-    #################################################
-    #gavilan
-    return None
 
+#################################################
+#Gavilán
 
+art = """
+              .................................
+              ................x................
+              ............,ooOMldl.............
+              ............':XMMMk;.............
+              ..........oXXo;,c':kWO;..........
+              .........KMk'd;:k.lo;WMc.........
+              ........oMM..o:lX'o:.oMN.........
+              ........dMM..dk;o;0:.cMM.........
+              ........,MMl'Kc,d.kO.KMO.........
+              .........;XMx,.lK'.,0Wx..........
+              ...........;dkl;;cdxc............
+              ......'cxxc....0M:...,oko;.......
+              .........;OWk,.OM:.lXNo..........
+              ...........,OMk0MoNNo............
+              ..............:XMd,..............
+              ...............kM'...............
+               ..............dM'..............
+                 .............l.............
+                    .....................
+                              .
+"""
 
+def main(): 
+    print(art)
+    print("Asistente de Linux por Luisa y Santiago")
+    while True:
+        user_input = input("> ")
+        if user_input.lower() == "salir":
+            print("¡Nos vemos!")
+            break
 
-subprocess.run(["ls", "-aF"])
+        command = parse_input(user_input)
+        if not command:
+            print("Lo siento, no entendí la instrucción")
+            continue
 
-subprocess.run(
-        ["ls -aF | grep main"],
-        shell=True
-        )
+        if not is_safe_command(command):
+            print("Comando no permitido o potencialmente peligroso.")
+            continue
+        
+        output = execute_command(command)
+        print(output)
 
-try:
-    subprocess.run(["sleep", "5"], timeout=2)
-except subprocess.TimeoutExpired:
-    print("El proceso tardó demasiado")
-
-capture = subprocess.run(
-        ["ls -aF"],
-        shell=True,
-        text=True,
-        capture_output=True
-        )
-print(capture.stdout)
-
-try:
-    subprocess.run(["ls", "archivo_inexistente.txt"], check=True)
-except subprocess.CalledProcessError as e:
-    print("Hubo un error:", e)
-
+if __name__ == "__main__":
+    main()
