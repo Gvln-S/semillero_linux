@@ -3,25 +3,16 @@ Nivel 1 - Básico
   (el problema de este seria que entonces tendriamos que crear
   una maquina virtual o permitir el acceso por ssh a una nuestra)
   2. buscar cuantas veces sale una palabra en un archivo de texto
-  3. cambiar los permisos para que solo el dueño pueda leer y 
-  escribir
-  4. mostrar fecha y hora del sistema
-  5. mover un archivo y renombrarlo
-  6. buscar todas las palabras "ERROR" en los archivos con terminación .txt
+  3. mostrar fecha del sistema
+  4. mover un archivo y renombrarlo
+  5. buscar todas las palabras "ERROR" en los archivos con terminación .txt
 
 Nivel 2 - Intermedio
-  1. comprimir una carpeta y luego extraerla en otro direcotrio
-  2. mostrar el porceso que más memoria está usando y finalizarlo
-  (mismo problema que en 1.1)
-  3. revisar en tiempo real cuando un archivo cambia
-  4. descargar una pagina web y ver cuantas veces dice la palabra "linux"
-  5. capturar un STDOUT de cualquier comando
+  1. descomprimir una carpeta 
+  2. descargar una pagina web y ver cuantas veces dice la palabra "linux"
+  3. capturar un STDOUT de cualquier comando
 
 Nivel 3 - Avanzado
-  1. crear un nuevo usuario, darle acceso a un directorio especifico
-  y quitarle el acceso al resto del sistema
-  2. reto trampa donde cat no muestre nada cuando en realida tiene un
+  1. reto trampa donde cat no muestre nada cuando en realida tiene un
   texto oculto
-  3. copiar un archivo desde una maquina remota a la personal
-  4. captura el Ctrl-C de un loop de 10 segundos
   
