@@ -150,24 +150,160 @@ def parse_input(user_input):
         except ValueError:
             pass
 
-    #buscar archivos o directorios
+    # buscar archivos o directorios
     if "find" in user_input:
         return user_input.strip()
 
-    if any(v in verbs for v in ("buscar","encontrar")) and any(n in nouns for n in ("archivo","directorio")):
+    #busca el verbo buscar o encontrar en la lista de verbos
+    if any(v in verbs for v in ("buscar", "encontrar")) and any(n in nouns for n in ("archivo", "directorio")):
         # modificados recientemente
         if "modificados" in nouns or "modificado" in nouns:
             return "find . -mtime -1"
+        # solo archivos
+        if "archivos" in nouns or "-type f" in user_input:
+            return "find . -type f"
+        # solo directorios
+        if "directorios" in nouns or "-type d" in user_input:
+            return "find . -type d"
         # búsqueda por nombre
         for tok in doc:
-            if tok.pos_ in ("PROPN","NOUN") and tok.text not in ("archivo","directorio"):
+            if tok.pos_ in ("PROPN", "NOUN") and tok.text not in ("archivo", "directorio"):
+                # si pide archivos
+                if "archivo" in nouns and "directorio" not in nouns:
+                    return f"find . -type f -name \"{tok.text}\""
+                # si pide directorios
+                if "directorio" in nouns and "archivo" not in nouns:
+                    return f"find . -type d -name \"{tok.text}\""
+                # búsqueda general
                 return f"find . -name \"{tok.text}\""
         return "find ."
 
     if "buscar" in verbs or "encontrar" in verbs:
         for t in doc:
             if t.pos_ in ("PROPN", "NOUN"):
-                return f"find -name {t.text}"
+                return f"find . -name \"{t.text}\""
+
+    # casos especiales con exec
+    if "eliminar" in verbs or "borrar" in verbs:
+        for t in doc:
+            if t.pos_ in ("PROPN", "NOUN"):
+                return f"find . -name \"{t.text}\" -exec rm {{}} \\;"
+        return "find . -exec rm {} \\;"
+
+    if "abrir" in verbs or "ejecutar" in verbs:
+        for t in doc:
+            if t.pos_ in ("PROPN", "NOUN"):
+                return f"find . -name \"{t.text}\" -exec xdg-open {{}} \\;"
+
+
+    # cambiar permisos con chmod
+    if "chmod" in user_input:
+        return user_input.strip()
+
+    if any(v in verbs for v in ("dar", "quitar", "cambiar", "agregar", "remover")) and "permiso" in nouns:
+        # Mapear permisos y entidades ingresadas por el usuario
+        permiso_map = {
+            "ejecución": "x", "ejecutable": "x",
+            "lectura": "r", "leer": "r",
+            "escritura": "w", "escribir": "w"
+        }
+        entidad_map = {
+            "usuario": "u",
+            "dueño": "u",
+            "propietario": "u",
+            "grupo": "g",
+            "otros": "o",
+            "todos": "a"
+        }
+        #va creando lo que se añadirá al comando final
+        permiso = ""
+        entidad = ""
+        accion = ""
+
+        # detectar acción (+ o -)
+        if any(w in verbs for w in ("dar", "agregar", "añadir", "permitir")):
+            accion = "+"
+        elif any(w in verbs for w in ("quitar", "remover", "denegar", "eliminar")):
+            accion = "-"
+
+        # detectar permiso
+        for tok in doc:
+            #revisa si algunan palabra del texto ingresado por el usuario esta en mapeado en permiso
+            if tok.lemma_.lower() in permiso_map:
+                #si si, pues añade el permiso al string
+                permiso = permiso_map[tok.lemma_.lower()]
+
+        # detectar entidad
+        for tok in doc:
+            #revisa si algunan palabra del texto ingresado por el usuario esta en mapeado en entidad
+            if tok.lemma_.lower() in entidad_map:
+                #si si pues añade la entidad al string
+                entidad = entidad_map[tok.lemma_.lower()]
+
+        # detectar archivo
+        archivo = None
+        for tok in doc:
+            if tok.pos_ in ("PROPN", "NOUN") and "." in tok.text:  # asume nombre de archivo con extensión
+                archivo = tok.text
+                break
+
+        if permiso and entidad and accion and archivo:
+            return f"chmod {entidad}{accion}{permiso} {archivo}"
+
+        # chmod numérico directo
+        if "chmod" not in user_input and any(tok.text.isdigit() and len(tok.text) == 3 for tok in doc):
+            #revisa si hay digitos en el texto del usuario
+            numero = next((tok.text for tok in doc if tok.text.isdigit() and len(tok.text) == 3), None)
+            #deterina el archivo
+            archivo = next((tok.text for tok in doc if tok.pos_ in ("PROPN", "NOUN") and "." in tok.text), None)
+            # si hay un número de 3 dígitos y un archivo, retorna el comando
+            if numero and archivo:
+                return f"chmod {numero} {archivo}"
+    
+
+    # chown adicional
+    #revisa que la palabra cambiar y dueño esten en la misma oracion
+    if "cambiar" in verbs and "dueño" in nouns:
+        for tok in doc:
+            if tok.text == "--from":
+                return user_input.strip()  # permite uso directo
+            if tok.pos_ in ("PROPN", "NOUN") and ':' in tok.text:
+                partes = tok.text.split(':')
+                if len(partes) == 2:
+                    archivo = next((t.text for t in doc if '.' in t.text or '/' in t.text), None)
+                    if archivo:
+                        return f"chown {tok.text} {archivo}"
+
+    #firewall
+    if "firewall" in nouns or "ufw" in user_input:
+        for tok in doc:
+            #busca verbos
+            if tok.lemma_ in ("activar", "encender", "habilitar"):
+                return "ufw enable"
+            elif tok.lemma_ in ("apagar", "desactivar", "inhabilitar"):
+                return "ufw disable"
+            elif tok.lemma_ == "estado" or tok.text == "status":
+                return "ufw status"
+            #busca permitir y puerto en la misma oracion
+            elif tok.lemma_ == "permitir" and "puerto" in nouns:
+                puerto = next((t.text for t in doc if t.text.isdigit()), None)
+                if puerto:
+                    return f"ufw allow {puerto}"
+            #busca bloquear y puerto en la misma oración
+            elif tok.lemma_ == "bloquear" and "puerto" in nouns:
+                #busca los numero en el texto, para usarlos como puerto
+                puerto = next((t.text for t in doc if t.text.isdigit()), None)
+                if puerto:
+                    return f"ufw deny {puerto}"
+            #busca eliminar y regla en la misma oracion
+            elif tok.lemma_ == "eliminar" and "regla" in nouns:
+                #busca los numero en el texto, para usarlos como puerto
+                puerto = next((t.text for t in doc if t.text.isdigit()), None)
+                if puerto:
+                    return f"ufw delete allow {puerto}"
+
+    
+
 
 #################################################
 #Gavilán
