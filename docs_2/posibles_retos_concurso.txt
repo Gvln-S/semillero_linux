@@ -10,9 +10,8 @@ Nivel 1 - Básico
 Nivel 2 - Intermedio
   1. descomprimir una carpeta 
   2. descargar una pagina web y ver cuantas veces dice la palabra "linux"
-  3. capturar un STDOUT de cualquier comando
 
 Nivel 3 - Avanzado
   1. reto trampa donde cat no muestre nada cuando en realida tiene un
   texto oculto
-  
+  2. capturar un STDOUT de cualquier comando
