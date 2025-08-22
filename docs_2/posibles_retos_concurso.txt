@@ -15,3 +15,18 @@ Nivel 3 - Avanzado
   1. reto trampa donde cat no muestre nada cuando en realida tiene un
   texto oculto
   2. capturar un STDOUT de cualquier comando
+
+Nivel 1 - Básico
+  1. cd, ls "microsoft_loves_debian_tuxito"
+  2. grep -c "Shrek"
+  3. date "2027"
+  4. mv
+  5. grep -c
+
+Nivel 2 - Intermedio
+  1. unzip 
+  2. curl "pagina" | grep -c linux
+
+Nivel 3 - Avanzado
+  1. getfattr --only-values -n user.secreto "archivo_silenciosito"
+  2. ls archivo-falso 2> respuesta.txt
